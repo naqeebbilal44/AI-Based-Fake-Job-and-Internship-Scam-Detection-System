@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Scan Result | Fake Job & Internship Detector{% endblock %}
+
+{% block content %}
+<div class="result-box">
+    <!-- Back Button -->
+    <div class="mb-3">
+        <a href="{{ url_for('index') }}" class="btn-back">← Check Another Job Posting</a>
+    </div>
+
+    <!-- Main Verdict Banner -->
+    <div class="verdict-card verdict-{{ result.verdict_class }}">
+        <div class="verdict-tag">{{ result.badge_text }}</div>
+        <h2 class="verdict-heading">{{ result.verdict }}</h2>
+        <p class="verdict-msg">{{ result.recommendation }}</p>
+
+        <!-- Risk Progress Bar -->
+        <div class="risk-bar-container">
+            <div class="risk-bar-labels">
+                <span>Calculated Scam Risk:</span>
+                <span class="risk-number text-{{ result.verdict_class }}">{{ result.risk_percentage }}%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill fill-{{ result.verdict_class }}" style="width: {{ result.risk_percentage }}%;"></div>
+            </div>
+            <div class="progress-legend">
+                <span>0% Safe</span>
+                <span>50% Suspicious</span>
+                <span>100% Scam</span>
+            </div>
+        </div>
+
+        <!-- Scores Breakdown -->
+        <div class="score-pills">
+            <div class="score-pill">
+                <strong>ML Model Probability:</strong> {{ result.ml_probability }}%
+            </div>
+            <div class="score-pill">
+                <strong>Red Flags Detected:</strong> {{ result.flag_count }} Warning(s)
+            </div>
+            <div class="score-pill">
+                <strong>Legitimate Likelihood:</strong> {{ result.legit_probability }}%
+            </div>
+        </div>
+    </div>
+
+    <!-- Two Columns: Red Flags & Extracted Info -->
+    <div class="result-details-grid">
+        <!-- Left: Red Flags -->
+        <div class="detail-card">
+            <h3>🚩 Why This Posting Was Flagged:</h3>
+            {% if result.heuristic_flags %}
+                <div class="flags-container">
+                    {% for flag in result.heuristic_flags %}
+                        <div class="flag-box flag-{{ flag.severity|lower }}">
+                            <div class="flag-title-row">
+                                <span class="flag-name">{{ flag.category }}</span>
+                                <span class="flag-level">{{ flag.severity }} Alert</span>
+                            </div>
+                            <p class="flag-text">{{ flag.description }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="all-clear-box">
+                    <span>✅ No blatant scam rules were triggered.</span>
+                    <p>The posting does not demand upfront fees, uses professional wording, and follows normal hiring practices.</p>
+                </div>
+            {% endif %}
+
+            {% if result.trigger_words %}
+                <div class="trigger-words-box">
+                    <strong>Suspicious Keywords Found:</strong>
+                    <div class="pill-group">
+                        {% for word in result.trigger_words %}
+                            <span class="bad-pill">{{ word }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: What the Detector Found in the Text -->
+        <div class="detail-card">
+            <h3>🔍 Information Extracted from Text:</h3>
+            <ul class="meta-list">
+                <li>
+                    <strong>Detected Emails:</strong>
+                    {% if result.extracted_meta.emails %}
+                        {% for email in result.extracted_meta.emails %}
+                            <code class="found-code">{{ email }}</code>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-gray">None found</span>
+                    {% endif %}
+                </li>
+                <li>
+                    <strong>Messaging Handles / Links:</strong>
+                    {% if result.extracted_meta.handles %}
+                        {% for handle in result.extracted_meta.handles %}
+                            <code class="found-code">{{ handle }}</code>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-gray">None found</span>
+                    {% endif %}
+                </li>
+                <li>
+                    <strong>Mentioned Pay / Money:</strong>
+                    {% if result.extracted_meta.salaries %}
+                        {% for sal in result.extracted_meta.salaries %}
+                            <code class="found-code">{{ sal }}</code>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-gray">Not specified in text</span>
+                    {% endif %}
+                </li>
+            </ul>
+
+            <!-- Advice Box -->
+            <div class="student-tip-box">
+                <h4>🎓 Tips for Students:</h4>
+                {% if result.verdict_class == 'danger' %}
+                    <ul>
+                        <li><strong>Rule #1:</strong> Never pay money for any job or internship. Real companies pay YOU.</li>
+                        <li><strong>Never deposit checks:</strong> If they send you a check to buy a laptop or phone, it will bounce.</li>
+                        <li><strong>Block & Report:</strong> Report the user on the platform where you found the message.</li>
+                    </ul>
+                {% elif result.verdict_class == 'warning' %}
+                    <ul>
+                        <li>Search the company name + "scam" or "reviews" on Google and Reddit.</li>
+                        <li>Look up the recruiter on LinkedIn to see if they genuinely work there.</li>
+                    </ul>
+                {% else %}
+                    <ul>
+                        <li>The posting looks legitimate!</li>
+                        <li>Standard safety reminder: never give your bank login or national ID until you sign a verified formal contract.</li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Collapsible Pasted Text Preview -->
+    <div class="pasted-text-card">
+        <h3>📄 Text That You Analyzed:</h3>
+        <pre class="pasted-pre">{{ raw_text }}</pre>
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="{{ url_for('index') }}" class="btn-check">← Check Another Job Posting</a>
+        <a href="{{ url_for('metrics') }}" class="btn-outline ml-2">View Model Accuracy & Confusion Matrix</a>
+    </div>
+</div>
+{% endblock %}

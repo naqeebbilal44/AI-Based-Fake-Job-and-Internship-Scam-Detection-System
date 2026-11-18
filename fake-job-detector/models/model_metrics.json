@@ -1,0 +1,200 @@
+{
+    "dataset_summary": {
+        "total_samples": 800,
+        "train_samples": 640,
+        "test_samples": 160,
+        "legitimate_count": 400,
+        "fraudulent_count": 400
+    },
+    "model_comparison": {
+        "Logistic Regression": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "confusion_matrix": [
+                [
+                    80,
+                    0
+                ],
+                [
+                    0,
+                    80
+                ]
+            ]
+        },
+        "Multinomial Naive Bayes": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "confusion_matrix": [
+                [
+                    80,
+                    0
+                ],
+                [
+                    0,
+                    80
+                ]
+            ]
+        },
+        "Random Forest": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "confusion_matrix": [
+                [
+                    80,
+                    0
+                ],
+                [
+                    0,
+                    80
+                ]
+            ]
+        }
+    },
+    "selected_production_model": "Logistic Regression",
+    "production_metrics": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": [
+            [
+                80,
+                0
+            ],
+            [
+                0,
+                80
+            ]
+        ]
+    },
+    "top_scam_words": [
+        {
+            "word": "home",
+            "weight": 0.994
+        },
+        {
+            "word": "earn",
+            "weight": 0.807
+        },
+        {
+            "word": "deposit",
+            "weight": 0.739
+        },
+        {
+            "word": "per",
+            "weight": 0.735
+        },
+        {
+            "word": "telegram",
+            "weight": 0.733
+        },
+        {
+            "word": "must",
+            "weight": 0.729
+        },
+        {
+            "word": "daily",
+            "weight": 0.718
+        },
+        {
+            "word": "interview",
+            "weight": 0.686
+        },
+        {
+            "word": "online",
+            "weight": 0.685
+        },
+        {
+            "word": "college",
+            "weight": 0.666
+        },
+        {
+            "word": "placement",
+            "weight": 0.637
+        },
+        {
+            "word": "required",
+            "weight": 0.629
+        },
+        {
+            "word": "offering",
+            "weight": 0.623
+        },
+        {
+            "word": "via",
+            "weight": 0.613
+        },
+        {
+            "word": "check",
+            "weight": 0.597
+        }
+    ],
+    "top_legit_words": [
+        {
+            "word": "computer",
+            "weight": -0.826
+        },
+        {
+            "word": "science",
+            "weight": -0.754
+        },
+        {
+            "word": "computer science",
+            "weight": -0.551
+        },
+        {
+            "word": "typescript",
+            "weight": -0.538
+        },
+        {
+            "word": "react",
+            "weight": -0.538
+        },
+        {
+            "word": "academic",
+            "weight": -0.533
+        },
+        {
+            "word": "model",
+            "weight": -0.499
+        },
+        {
+            "word": "assist",
+            "weight": -0.499
+        },
+        {
+            "word": "tools",
+            "weight": -0.489
+        },
+        {
+            "word": "analytics",
+            "weight": -0.483
+        },
+        {
+            "word": "hardware",
+            "weight": -0.477
+        },
+        {
+            "word": "hybrid",
+            "weight": -0.476
+        },
+        {
+            "word": "experience",
+            "weight": -0.457
+        },
+        {
+            "word": "using",
+            "weight": -0.457
+        },
+        {
+            "word": "team",
+            "weight": -0.453
+        }
+    ]
+}

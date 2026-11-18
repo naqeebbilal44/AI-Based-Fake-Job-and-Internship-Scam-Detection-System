@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Fake Job & Internship Detector | Student Project{% endblock %}
+
+{% block content %}
+<div class="student-hero">
+    <div class="college-badge">🎓 Python College Project: NLP & Machine Learning</div>
+    <h1 class="main-heading">Fake Job & Internship Scam Detector</h1>
+    <p class="sub-heading">
+        Found a job or internship offer on <strong>LinkedIn, Indeed, WhatsApp, Telegram, or Email</strong>?
+        Just copy the whole message or job description and paste it below to check if it's real or a scam!
+    </p>
+</div>
+
+{% if error %}
+<div class="alert-box alert-error">
+    <strong>Notice:</strong> {{ error }}
+</div>
+{% endif %}
+
+<!-- Quick Click Examples for Viva / Presentation Demo -->
+<div class="example-box">
+    <div class="example-header">
+        <span class="example-title">🧪 Try an Example (Click to test instantly):</span>
+    </div>
+    <div class="example-buttons">
+        <button type="button" class="btn-sample sample-scam" onclick="loadSample('scam_whatsapp_typing')">
+            ❌ Fake WhatsApp Typing Job ($75/hr)
+        </button>
+        <button type="button" class="btn-sample sample-scam" onclick="loadSample('scam_internship_fee')">
+            ❌ Fake Internship ($150 Fee)
+        </button>
+        <button type="button" class="btn-sample sample-scam" onclick="loadSample('scam_equipment_check')">
+            ❌ Fake Check / Laptop Scam
+        </button>
+        <button type="button" class="btn-sample sample-legit" onclick="loadSample('legit_google_intern')">
+            ✅ Real Software Intern (Apex Cloud)
+        </button>
+        <button type="button" class="btn-sample sample-legit" onclick="loadSample('legit_startup_dev')">
+            ✅ Real Startup Dev Job
+        </button>
+    </div>
+</div>
+
+<!-- Main Copy-Paste Form -->
+<form action="{{ url_for('predict') }}" method="POST" class="scanner-card" id="scanForm">
+    <div class="input-header">
+        <label for="raw_text" class="input-label">
+            <strong>📋 Paste the Full Job or Internship Posting Below:</strong>
+        </label>
+        <span class="input-hint">Copy the full job description, WhatsApp message, or email text</span>
+    </div>
+
+    <textarea 
+        id="raw_text" 
+        name="raw_text" 
+        class="student-textarea" 
+        rows="10" 
+        placeholder="Paste here... For example:
+'URGENT HIRING! Work from home typing jobs. Earn $60/hr. No interview needed! Contact us on Telegram @HiringManager or hr.team@gmail.com. Small $50 registration fee required...'"
+        required></textarea>
+
+    <div class="button-bar">
+        <button type="submit" class="btn-check">
+            🔍 Check This Job (Run Detector)
+        </button>
+        <button type="button" class="btn-clear" onclick="clearText()">
+            Clear Box
+        </button>
+    </div>
+</form>
+
+<!-- How It Works (Student Explanation for Evaluators) -->
+<div class="student-info-section">
+    <h3>💡 How This Project Detects Scams:</h3>
+    <div class="info-grid">
+        <div class="info-card">
+            <span class="info-num">1</span>
+            <h4>Machine Learning (NLP)</h4>
+            <p>Converts the text into mathematical vectors using <strong>TF-IDF</strong> and runs a <strong>Logistic Regression</strong> model trained on 800 real & fake job listings.</p>
+        </div>
+        <div class="info-card">
+            <span class="info-num">2</span>
+            <h4>Scam Keyword Rules</h4>
+            <p>Automatically flags upfront registration fees, security deposits, cashier check schemes, and promises of high pay with no interview.</p>
+        </div>
+        <div class="info-card">
+            <span class="info-num">3</span>
+            <h4>Contact Channel Check</h4>
+            <p>Checks if the recruiter uses free personal emails (<code>@gmail.com</code>, <code>@yahoo.com</code>) or moves conversations to secret Telegram/WhatsApp chats.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function loadSample(sampleId) {
+        fetch('/api/sample/' + sampleId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.text) {
+                    const txtArea = document.getElementById('raw_text');
+                    txtArea.value = data.text;
+                    txtArea.focus();
+                    txtArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            })
+            .catch(err => {
+                alert('Could not load sample.');
+            });
+    }
+
+    function clearText() {
+        document.getElementById('raw_text').value = '';
+        document.getElementById('raw_text').focus();
+    }
+</script>
+{% endblock %}

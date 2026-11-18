@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fake Job & Internship Detection System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="student-navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}" class="brand-title-link">
+                    <span class="icon">🛡️</span>
+                    <span class="title">Fake Job & Internship Detector</span>
+                </a>
+                <span class="student-subtag">Student Python Project</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-btn {% if request.path == '/' %}active{% endif %}">📋 Check a Job</a>
+                <a href="{{ url_for('metrics') }}" class="nav-btn {% if request.path == '/metrics' %}active{% endif %}">📊 Model Accuracy (Viva)</a>
+                <a href="{{ url_for('safety_guide') }}" class="nav-btn {% if request.path == '/safety-guide' %}active{% endif %}">📖 Scam Warning Signs</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-body">
+        <div class="content-container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Student Project Footer -->
+    <footer class="student-footer">
+        <div class="content-container footer-flex">
+            <p><strong>Python Final Year / Semester Project:</strong> Fake Job Posting & Internship Detection using NLP & Machine Learning.</p>
+            <div class="footer-badges">
+                <span>Python 3</span>
+                <span>Flask</span>
+                <span>TF-IDF</span>
+                <span>Logistic Regression</span>
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

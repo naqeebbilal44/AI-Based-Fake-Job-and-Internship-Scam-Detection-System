@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Model Evaluation & Metrics | Fake Job & Internship Detection{% endblock %}
+
+{% block content %}
+<div class="page-intro">
+    <div class="intro-badge">Academic Benchmark & Validation</div>
+    <h1 class="page-title">Machine Learning Model Performance</h1>
+    <p class="page-subtitle">Comprehensive evaluation metrics, model comparison benchmarks, confusion matrix, and feature coefficient analysis for academic review.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">
+    <span class="alert-icon">⚠️</span>
+    <span class="alert-text">{{ error }}</span>
+</div>
+{% endif %}
+
+{% if metrics_data %}
+<!-- Top Level KPI Cards -->
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <span class="kpi-label">Test Accuracy</span>
+        <span class="kpi-value">{{ (metrics_data.production_metrics.accuracy * 100)|round(1) }}%</span>
+        <span class="kpi-subtext">Overall correct classifications</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-label">Precision (Fraud)</span>
+        <span class="kpi-value">{{ (metrics_data.production_metrics.precision * 100)|round(1) }}%</span>
+        <span class="kpi-subtext">Minimizes false scam accusations</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-label">Recall (Sensitivity)</span>
+        <span class="kpi-value">{{ (metrics_data.production_metrics.recall * 100)|round(1) }}%</span>
+        <span class="kpi-subtext">Catches dangerous fraudulent offers</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-label">F1-Score</span>
+        <span class="kpi-value">{{ (metrics_data.production_metrics.f1_score * 100)|round(1) }}%</span>
+        <span class="kpi-subtext">Harmonic mean of precision & recall</span>
+    </div>
+</div>
+
+<!-- Model Benchmark Comparison Table -->
+<div class="card mb-4">
+    <div class="card-header-styled">
+        <span class="card-icon">🏆</span>
+        <div>
+            <h3 class="card-title">Comparative Classifier Benchmark</h3>
+            <p class="card-subtext">Performance comparison across three machine learning algorithms evaluated on the held-out 20% test partition.</p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Accuracy</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-Score</th>
+                    <th>Deployment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model_name, stats in metrics_data.model_comparison.items() %}
+                <tr {% if model_name == metrics_data.selected_production_model %}class="highlight-row"{% endif %}>
+                    <td>
+                        <strong>{{ model_name }}</strong>
+                        {% if model_name == metrics_data.selected_production_model %}
+                            <span class="badge badge-success badge-sm ml-2">Selected for Production</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ (stats.accuracy * 100)|round(2) }}%</td>
+                    <td>{{ (stats.precision * 100)|round(2) }}%</td>
+                    <td>{{ (stats.recall * 100)|round(2) }}%</td>
+                    <td>{{ (stats.f1_score * 100)|round(2) }}%</td>
+                    <td>
+                        {% if model_name == metrics_data.selected_production_model %}
+                            <span class="status-active">● Active Inference Engine</span>
+                        {% else %}
+                            <span class="status-bench">Evaluated Benchmark</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Visual Confusion Matrix & Technical Explanation -->
+<div class="matrix-grid mb-4">
+    <div class="card">
+        <div class="card-header-styled">
+            <span class="card-icon">📉</span>
+            <div>
+                <h3 class="card-title">Confusion Matrix</h3>
+                <p class="card-subtext">Visual representation of True/False Positives and Negatives.</p>
+            </div>
+        </div>
+        <div class="chart-wrapper">
+            <img src="{{ url_for('static', filename='img/confusion_matrix.png') }}" alt="Confusion Matrix Chart" class="chart-img">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header-styled">
+            <span class="card-icon">📖</span>
+            <div>
+                <h3 class="card-title">Academic Matrix Interpretation</h3>
+                <p class="card-subtext">How to explain this matrix to project evaluators and viva examiners.</p>
+            </div>
+        </div>
+        <div class="matrix-explanation">
+            <div class="explain-item">
+                <span class="explain-title">True Negatives (TN):</span>
+                <p>Legitimate job & internship listings correctly predicted as safe. Candidates can proceed to apply with peace of mind.</p>
+            </div>
+            <div class="explain-item">
+                <span class="explain-title">True Positives (TP):</span>
+                <p>Scam & fraudulent listings correctly identified and intercepted before applicants lose money or private data.</p>
+            </div>
+            <div class="explain-item">
+                <span class="explain-title">False Positives (FP):</span>
+                <p>A legitimate company flagged as a scam (Type I error). Minimized by measuring high Precision.</p>
+            </div>
+            <div class="explain-item">
+                <span class="explain-title">False Negatives (FN):</span>
+                <p>A dangerous scam misclassified as legitimate (Type II error). Minimized by measuring high Recall, ensuring student safety.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Influential Features Section -->
+<div class="features-split-grid mb-4">
+    <!-- Top Scam Keywords -->
+    <div class="card">
+        <div class="card-header-styled">
+            <span class="card-icon">🚨</span>
+            <div>
+                <h3 class="card-title">Top Scam Indicator Terms</h3>
+                <p class="card-subtext">Words with the highest positive coefficients driving scam classification.</p>
+            </div>
+        </div>
+        <div class="words-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>N-Gram / Keyword</th>
+                        <th>Model Weight (Impact)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in metrics_data.top_scam_words[:10] %}
+                    <tr>
+                        <td><span class="token-scam">{{ item.word }}</span></td>
+                        <td><span class="weight-pos">+{{ item.weight }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top Legit Keywords -->
+    <div class="card">
+        <div class="card-header-styled">
+            <span class="card-icon">✅</span>
+            <div>
+                <h3 class="card-title">Top Legitimate Indicator Terms</h3>
+                <p class="card-subtext">Words with negative coefficients associated with genuine corporate recruitment.</p>
+            </div>
+        </div>
+        <div class="words-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>N-Gram / Keyword</th>
+                        <th>Model Weight (Impact)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in metrics_data.top_legit_words[:10] %}
+                    <tr>
+                        <td><span class="token-legit">{{ item.word }}</span></td>
+                        <td><span class="weight-neg">{{ item.weight }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset & Methodology Details -->
+<div class="card">
+    <div class="card-header-styled">
+        <span class="card-icon">📁</span>
+        <div>
+            <h3 class="card-title">Dataset Characteristics & Featurization</h3>
+            <p class="card-subtext">Dataset partition and tokenization methodology.</p>
+        </div>
+    </div>
+    <div class="dataset-meta-grid">
+        <div class="meta-box">
+            <span class="meta-title">Total Corpus Samples</span>
+            <span class="meta-val">{{ metrics_data.dataset_summary.total_samples }} Postings</span>
+        </div>
+        <div class="meta-box">
+            <span class="meta-title">Class Distribution</span>
+            <span class="meta-val">{{ metrics_data.dataset_summary.legitimate_count }} Legit / {{ metrics_data.dataset_summary.fraudulent_count }} Scam (Balanced)</span>
+        </div>
+        <div class="meta-box">
+            <span class="meta-title">Train / Test Partition</span>
+            <span class="meta-val">{{ metrics_data.dataset_summary.train_samples }} Train (80%) / {{ metrics_data.dataset_summary.test_samples }} Test (20%)</span>
+        </div>
+        <div class="meta-box">
+            <span class="meta-title">Featurizer</span>
+            <span class="meta-val">TF-IDF (Unigrams & Bigrams, Sublinear Scaling)</span>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
